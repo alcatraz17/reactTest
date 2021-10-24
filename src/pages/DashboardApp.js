@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useEffect, useState } from "react";
+import axios from "axios";
 // material
-import { Box, Grid, Container, Typography } from '@mui/material';
+import { Box, Grid, Container, Typography } from "@mui/material";
 // components
-import Page from '../components/Page';
+import Page from "../components/Page";
 import {
   AppTasks,
   AppNewUsers,
@@ -13,17 +13,21 @@ import {
   AppWebsiteVisits,
   AppCurrentSubject,
   AppCurrentVisits
-} from '../components/_dashboard/app';
+} from "../components/_dashboard/app";
 
 // ----------------------------------------------------------------------
 
 export default function DashboardApp() {
-  const [data, setData] = useState('Not fetched data!');
+  const [data, setData] = useState("Not fetched data!");
 
-  useEffect(async () => {
-    const fetchedData =  axios.get('https://dog.ceo/api/breeds/list/all');
-    setData(fetchedData);
-  });
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    const fetchData = await axios.get("https://dog.ceo/api/breeds/list/all");
+    setData(JSON.stringify(fetchData.data.message));
+  };
 
   return (
     <Page title="Dashboard | Minimal-UI">
@@ -53,7 +57,7 @@ export default function DashboardApp() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentSubject data={data}/>
+            <AppCurrentSubject data={data} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>

@@ -1,5 +1,6 @@
-import PropTypes from 'prop-types';
-import { Form, FormikProvider, useFormik } from 'formik';
+import PropTypes from "prop-types";
+import { useState } from "react";
+import { Form, FormikProvider, useFormik } from "formik";
 // material
 import {
   Box,
@@ -9,16 +10,16 @@ import {
   Typography,
   FormControlLabel,
   Stack
-} from '@mui/material';
+} from "@mui/material";
 
 // ----------------------------------------------------------------------
 
-const TASKS = [
-  'Create FireStone Logo',
-  'Add SCSS and JS files if required',
-  'Stakeholder Meeting',
-  'Scoping & Estimations',
-  'Sprint Showcase'
+let TASKS = [
+  "Create FireStone Logo",
+  "Add SCSS and JS files if required",
+  "Stakeholder Meeting",
+  "Scoping & Estimations",
+  "Sprint Showcase"
 ];
 
 // ----------------------------------------------------------------------
@@ -31,20 +32,24 @@ TaskItem.propTypes = {
 
 function TaskItem({ task, checked, formik, ...other }) {
   const { getFieldProps } = formik;
-
   return (
     <Stack direction="row" justifyContent="space-between" sx={{ py: 0.75 }}>
       <FormControlLabel
         control={
-          <Checkbox {...getFieldProps('checked')} value={task} checked={checked} {...other} />
+          <Checkbox
+            {...getFieldProps("checked")}
+            value={task}
+            checked={checked}
+            {...other}
+          />
         }
         label={
           <Typography
             variant="body2"
             sx={{
               ...(checked && {
-                color: 'text.disabled',
-                textDecoration: 'line-through'
+                color: "text.disabled",
+                textDecoration: "line-through"
               })
             }}
           >
@@ -57,6 +62,22 @@ function TaskItem({ task, checked, formik, ...other }) {
 }
 
 export default function AppTasks() {
+  const [list, setList] = useState("");
+  const [tasks, setTasks] = useState(TASKS);
+  const addTask = () => {
+    if (!list || /^\s*$/.test(list)) {
+      alert("Task can not be empty!");
+    } else {
+      setTasks([...tasks, list]);
+    }
+    setList("");
+  };
+
+  // console.log(TASKS);
+  const itemEvent = (event) => {
+    setList(event.target.value);
+  };
+
   const formik = useFormik({
     initialValues: {
       checked: [TASKS[2]]
@@ -74,13 +95,27 @@ export default function AppTasks() {
       <Box sx={{ px: 3, py: 1 }}>
         <FormikProvider value={formik}>
           <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-            {TASKS.map((task) => (
+            {tasks.map((task, index) => (
               <TaskItem
                 task={task}
                 formik={formik}
                 checked={values.checked.includes(task)}
+                key={index}
               />
             ))}
+            <input
+              type="text"
+              value={list}
+              placeholder="Enter your task..."
+              onChange={itemEvent}
+            />
+            <button
+              type="button"
+              className="btn btn-light my-2 mx-1"
+              onClick={addTask}
+            >
+              Add task
+            </button>
           </Form>
         </FormikProvider>
       </Box>
